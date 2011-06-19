@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<!--
+Copyright 2011, Jose Vasconcellos
+-->
+<head>
+    <meta charset="utf-8" />
+    <title>Puzzle 15</title>
+    <style type="text/css">
+    <!--
+    .square {
+      width: 8em;
+      height: 8em;
+    }
+    -->
+    </style>
+</head>
+<body>
+<table border="1"> 
+<tr>
+ <td><button class="square" onclick="move(this)" id="0">1</button></td>
+ <td><button class="square" onclick="move(this)" id="1">2</button></td>
+ <td><button class="square" onclick="move(this)" id="2">3</button></td>
+ <td><button class="square" onclick="move(this)" id="3">4</button></td>
+ </tr>
+ <tr>
+ <td><button class="square" onclick="move(this)" id="4">5</button></td>
+ <td><button class="square" onclick="move(this)" id="5">6</button></td>
+ <td><button class="square" onclick="move(this)" id="6">7</button></td>
+ <td><button class="square" onclick="move(this)" id="7">8</button></td>
+ </tr>
+ <tr>
+ <td><button class="square" onclick="move(this)" id="8">9</button></td>
+ <td><button class="square" onclick="move(this)" id="9">10</button></td>
+ <td><button class="square" onclick="move(this)" id="10">11</button></td>
+ <td><button class="square" onclick="move(this)" id="11">12</button></td>
+ </tr>
+ <tr>
+ <td><button class="square" onclick="move(this)" id="12">13</button></td>
+ <td><button class="square" onclick="move(this)" id="13">14</button></td>
+ <td><button class="square" onclick="move(this)" id="14">15</button></td>
+ <td><button class="square" onclick="move(this)" id="15" ></button></td>
+ </tr>
+ </table>
+
+ <button accesskey='n' onClick="newgame()">New Game</button>
+ <script type="text/javascript">
+ var empty = document.getElementById("15");
+ var bk = empty.style.backgroundColor;
+ empty.style.backgroundColor='#cc0000';
+
+  function valid(array) {
+    var inv = 0;
+    var num = array.length;
+    var dim = parseInt(Math.sqrt(num));
+    var iTile, jTile;
+
+    for (i=0; i < num; i++) {
+      iTile = array[i];
+      if (iTile != 0) {
+        for (j = i + 1; j < num; ++j) {
+          jTile = array[j];
+          if (jTile != 0 && jTile < iTile) {
+            ++inv;
+          }
+        }
+      } else {
+        if ((dim & 0x1) == 0) {
+          inv += (1 + parseInt(i / dim));
+        }
+      }
+    }
+
+    return (inv & 1) == 0;
+  }
+
+  function shuffle(array) {
+    var n = array.length, k, t;
+    if (n == 0) return false;
+    while (--n) {
+            k = Math.floor(Math.random() * (n+1));
+            t = array[n];
+            array[n] = array[k];
+            array[k] = t;
+    }
+
+    if (!valid(array)) {
+      n = (array[0] != 0 && array[1] != 0) ? 0 : 2;
+      t = array[n];
+      array[n] = array[n+1];
+      array[n+1] = t;
+    }
+  }
+
+ function newgame() {
+   var l = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+   var e;
+   shuffle(l);
+   for (i=0; i < l.length; i++) {
+     e = document.getElementById(i);
+     if (l[i] == 0) {
+       empty = e;
+     e.innerHTML = '';
+     } else {
+     e.innerHTML = l[i].toString();
+     e.style.backgroundColor=bk;
+     }
+   }
+   empty.style.backgroundColor='#cc0000';
+ }
+
+ function keypress(event)
+ {
+   var keyCode = (event==null) ?  window.event.keyCode : event.keyCode; 
+   var id = parseInt(empty.id);
+   switch (keyCode) {
+   case 38:  /* Up arrow was pressed */
+    id += 4;
+    break;
+   case 40:  /* Down arrow was pressed */
+    id -= 4;
+    break;
+   case 37:  /* Left arrow was pressed */
+    id += 1;
+    break;
+   case 39:  /* Right arrow was pressed */
+    id -= 1;
+    break;
+   default:
+    return;
+   }
+   var b = document.getElementById(id);
+   if (b) {move(b);}
+ }
+
+ function move(b)
+ {
+   var diff = Math.abs(parseInt(b.id) - parseInt(empty.id));
+   if (diff == 4 || (diff == 1  && (Math.floor(parseInt(b.id)/4) == Math.floor(parseInt(empty.id)/4)))) {
+     empty.innerHTML = b.innerHTML;
+     empty.style.backgroundColor=b.style.backgroundColor;
+     b.style.backgroundColor='#cc0000';
+     b.innerHTML = '';
+     empty = b;
+   }
+ }
+
+ function load() {
+ document.body.onkeyup=keypress;
+ }
+ load();
+ </script>
+
+</body>
+</html>
